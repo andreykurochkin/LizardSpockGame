@@ -10,18 +10,45 @@ namespace LizardSpockGame.Core.Validators {
     /// </summary>
     public class InputParametersValidator {
         private readonly string[] _source;
+        private const string defaultSuffix = "Please enter new ones like: Stone, Scissors, Paper, Lizard, Spock.";
         public InputParametersValidator(string[] source) => _source = source;
         public (bool, string) Validate() {
+            var message = string.Empty;
+            if (SourceIsNullOrEmpty()) {
+                message = "No input parameters.";
+                return (false, $"{message} {defaultSuffix}");
+            }
+            if (LengthIsLessThenThree()) {
+                message = "Input parameters is less then three.";
+                return (false, $"{message} {defaultSuffix}");
+            }
+            if (LengthIsEven()) {
+                message = "Amount of parameters should be odd.";
+                return (false, $"{message} {defaultSuffix}");
+            }
+            if (ContainsRepeatedItems()) {
+                message = "Parameters should not contain repeated items.";
+                return (false, $"{message} {defaultSuffix}");
+            }
             return (true, string.Empty);
         }
         private bool LengthIsLessThenThree() {
-            throw new NotImplementedException();
+            return _source.Length < 3;
         }
         private bool LengthIsEven() {
-            throw new NotImplementedException();
+            return _source.Length%2 == 0;
         }
         private bool ContainsRepeatedItems() {
-            throw new NotImplementedException
+            return _source.Count() != _source.Distinct().Count();
+        }
+        private bool SourceIsNullOrEmpty() {
+            if (_source is null) {
+                return true;
+            }
+            if (!_source.Any()) {
+                return true;
+            }
+            return false;
         }
     }
 }
