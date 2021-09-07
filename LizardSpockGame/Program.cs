@@ -3,7 +3,6 @@ using LizardSpockGame.Core.Validators;
 using System;
 using System.Security.Cryptography;
 using System.Text;
-//using CryptHash.Net.Hash;
 namespace LizardSpockGame {
     class Program {
         static void Main(string[] args) {
@@ -16,6 +15,8 @@ namespace LizardSpockGame {
             var key = new Key();
             Console.Write("HMAC: ");
             Console.Write(key.ToString());
+            Console.WriteLine("Available moves:");
+            Console.ReadKey();
         }
     }
 }

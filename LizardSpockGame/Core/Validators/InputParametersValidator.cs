@@ -10,7 +10,7 @@ namespace LizardSpockGame.Core.Validators {
     /// </summary>
     public class InputParametersValidator {
         private readonly string[] _source;
-        private const string defaultSuffix = "Please enter new ones like: Stone, Scissors, Paper, Lizard, Spock.";
+        private const string defaultSuffix = "Please enter new ones like: Stone Scissors Paper Lizard Spock";
         public InputParametersValidator(string[] source) => _source = source;
         public (bool, string) Validate() {
             var message = string.Empty;
