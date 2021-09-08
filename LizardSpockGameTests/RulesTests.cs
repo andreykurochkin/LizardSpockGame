@@ -11,8 +11,8 @@ namespace LizardSpockGameTests {
         private Rules _sut;
         [Theory]
         [InlineData("A", "B", "C")]
-        public void GetValues_ShouldReturnCorrectSetOfData_WhenAmountOfRulesIsThree(params string[] moves) {
-            _sut = new Rules(moves);
+        public void GetValues_ShouldReturnCorrectSetOfData_WhenAmountOfRulesIsThree(params string[] turns) {
+            _sut = new Rules(turns);
             var keyAndWinners = new List<(string, string[], string[])>() {
                 { ("A", new string[] { "B" }, new string[] { "C" }) },
                 { ("B", new string[] { "C" }, new string[] { "A" }) },
@@ -21,7 +21,7 @@ namespace LizardSpockGameTests {
 
             var result = _sut.GetValues();
 
-            result.Count().Should().Be(moves.Length);
+            result.Count().Should().Be(turns.Length);
             foreach (var tuple in keyAndWinners) {
                 var resultItem = result.Where(x => x.Item1 == tuple.Item1).First();
                 resultItem.Item2.Should().Equal(tuple.Item2);
@@ -30,8 +30,8 @@ namespace LizardSpockGameTests {
         }
         [Theory]
         [InlineData("A", "B", "C", "D", "E")]
-        public void GetValues_ShouldReturnCorrectSetOfData_WhenAmountOfRulesIsFive(params string[] moves) {
-            _sut = new Rules(moves);
+        public void GetValues_ShouldReturnCorrectSetOfData_WhenAmountOfRulesIsFive(params string[] turns) {
+            _sut = new Rules(turns);
             // <key, winners, loosers>
             var keyAndWinners = new List<(string, string[], string[])>() {
                 { ("A", new string[] { "B", "C" }, new string[] { "D", "E" }) },
@@ -42,7 +42,7 @@ namespace LizardSpockGameTests {
             };
             var result = _sut.GetValues();
 
-            result.Count().Should().Be(moves.Length);
+            result.Count().Should().Be(turns.Length);
             foreach (var tuple in keyAndWinners) {
                 var resultItem = result.Where(x => x.Item1 == tuple.Item1).First();
                 resultItem.Item2.Should().Equal(tuple.Item2);
@@ -53,8 +53,8 @@ namespace LizardSpockGameTests {
         [InlineData(0, 1, "A", "B", "C")]
         [InlineData(1, 2, "A", "B", "C")]
         [InlineData(2, 0, "A", "B", "C")]
-        public void GetNextIndex_ShouldReturnValidIndex_WhenDataIsValid(int currentIndex, int expected, params string[] moves) {
-            _sut = new Rules(moves);
+        public void GetNextIndex_ShouldReturnValidIndex_WhenDataIsValid(int currentIndex, int expected, params string[] turns) {
+            _sut = new Rules(turns);
 
             var result = _sut.GetNextIndex(currentIndex);
 

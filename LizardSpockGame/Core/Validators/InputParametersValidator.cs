@@ -32,15 +32,9 @@ namespace LizardSpockGame.Core.Validators {
             }
             return (true, string.Empty);
         }
-        private bool LengthIsLessThenThree() {
-            return _source.Length < 3;
-        }
-        private bool LengthIsEven() {
-            return _source.Length%2 == 0;
-        }
-        private bool ContainsRepeatedItems() {
-            return _source.Count() != _source.Distinct().Count();
-        }
+        private bool LengthIsLessThenThree() => _source.Length < 3;
+        private bool LengthIsEven() => _source.Length % 2 == 0;
+        private bool ContainsRepeatedItems() => _source.Count() != _source.Distinct().Count();
         private bool SourceIsNullOrEmpty() {
             if (_source is null) {
                 return true;

@@ -13,9 +13,9 @@ namespace LizardSpockGame {
             if (!LoggedValidateInputParameters(args)) {
                 return;
             }
-            (var key, var rules) = (new Key(), new Rules(args));
-            PrintHeader(args, key);
-            ProcessUserInput(args, rules.GetValues(), key);
+            (var key, var rules, var pcTurnIndex) = (new Key(), new Rules(args).GetValues(), GenerateRandomIndex(args.Length));
+            PrintHeader(args, key.ComputeHmac(args[pcTurnIndex]));
+            PlayTheGame(args, rules, key, indexOfPcTurn);
             Console.ReadKey();
         }
         private static bool LoggedValidateInputParameters(string[] args) {
@@ -26,99 +26,70 @@ namespace LizardSpockGame {
             }
             return validationResult.Item1;
         }
-        private static void PrintHeader(string[] args, Key key) {
-            Console.WriteLine($"HMAC: {key}");
-            Console.WriteLine("Available moves:");
-            PrintMoves(args);
+        private static void PrintHeader(string[] args, byte[] hmac) {
+            Console.WriteLine($"HMAC: {hmac}");
+            Console.WriteLine("Available turns:");
+            PrintTurnsInfo(args);
             Console.WriteLine("0 - exit");
             Console.WriteLine("? - help");
         }
-        private static void PrintMoves(string[] moves) {
-            moves.Select((Value, Index) => new { i = Index + 1, v = Value })
+        private static void PrintTurnsInfo(string[] turns) {
+            turns.Select((Value, Index) => new { i = Index + 1, v = Value })
                 .ToList()
                 .ForEach(x => Console.WriteLine($"{x.i} - {x.v}"));
         }
-        private static void ProcessUserInput(string[] moves, IEnumerable<(string, string[], string[])> rules, Key key) {
-            var exit = false;
-            while (!exit) {
-                Console.Write("Enter your move: ");
+        private static void PlayTheGame(string[] turns, IEnumerable<(string, string[], string[])> rules, Key key) {
+            var exitGame = false;
+            while (!exitGame) {
+                Console.Write("Enter your turn: ");
                 var userInput = Console.ReadLine();
                 Console.WriteLine();
                 var isQuestionMark = (userInput == "?");
                 if (isQuestionMark) {
-                    PrintTable(moves);
+                    PrintTable(rules);
                     continue;
                 }
                 var isZeroDigit = (userInput == "0");
                 if (isZeroDigit) {
                     Console.WriteLine("see ya");
-                    exit = true;
+                    exitGame = true;
                     continue;
                 }
                 if (!int.TryParse(userInput, out int number)) {
-                    exit = true;
+                    exitGame = true;
                     continue;
                 }
-                var isInRange = ((number >= 1) && (number <= moves.Length));
+                var isInRange = ((number >= 1) && (number <= turns.Length));
                 if (!isInRange) {
-                    exit = false;
+                    exitGame = false;
                     continue;
                 }
-                var userIndex = number - 1;
-                Console.WriteLine($"Your move number: {moves[userIndex]}");
-                var pcIndex = new ChanceNET.Chance().Integer(0, moves.Length);
-                Console.WriteLine($"Computer move: {moves[pcIndex]}");
-                Console.WriteLine(GetResult(moves[userIndex], moves[pcIndex], rules));
+                Console.WriteLine($"Your turn number: {turns[number - 1]}");
+                var pcIndex = new ChanceNET.Chance().Integer(0, turns.Length);
+                Console.WriteLine($"Computer turn: {turns[gene]}");
+                Console.WriteLine(GetResult(turns[userIndex], turns[pcIndex], rules));
                 Console.WriteLine($"HMAC key: {key}");
             }
         }
-        private static string GetResult(string userChoice, string pcChoice, IEnumerable<(string, string[], string[])> rules) {
-            var sameChoice = (userChoice == pcChoice);
-            if (sameChoice) {
-                return "Draw!";
-            }
-            var doesUserWon = rules.Where(t => t.Item1 == pcChoice)
+        private static string GetRandomTurnResult(string[] turns) => turns[GenerateRandomIndex(turns.Length)];
+        private static int GenerateRandomIndex(int maxValue) => new ChanceNET.Chance().Integer(0, maxValue);
+        private static string GetResult(string userTurn, string pcTurn, IEnumerable<(string, string[], string[])> rules) {
+            return IsDraw(userTurn, pcTurn)
+                ? "Draw!"
+                : (DoesUserWin(userTurn, pcTurn, rules))
+                    ? "You win!"
+                    : "You lost!";
+        }
+
+        private static bool IsDraw(string userTurn, string pcTurn) => userTurn == pcTurn;
+        
+        private static bool DoesUserWin(string userTurn, string pcTurn, IEnumerable<(string, string[], string[])> rules) => 
+            rules.Where(t => t.Item1 == pcTurn)
                 .First()
                 .Item2
-                .Contains(userChoice);
-            return (doesUserWon) ? "You win!" : "You lost!";
-        }
-        //private static void ValidateUserInput(string[] moves) {
-        //    var exit = false;
-        //    while (!exit) {
-        //        Console.Write("Enter your move: ");
-        //        var userInput = Console.ReadKey().KeyChar;
-        //        Console.WriteLine();
-        //        var isQuestionMark = (userInput == '?');
-        //        if (isQuestionMark) {
-        //            PrintTable(moves);
-        //            continue;
-        //        }
-        //        var isZeroDigit = (userInput == '0');
-        //        if (isZeroDigit) {
-        //            Console.WriteLine("see ya");
-        //            exit = true;
-        //            continue;
-        //        }
-        //        var isDigit = char.IsDigit(userInput);
-        //        if (!isDigit) {
-        //            exit = true;
-        //            continue;
-        //        }
-        //        int digit = userInput - '0';
-        //        var isInRange = ((digit >= 1) && (digit <= moves.Length));
-        //        if (!isInRange) {
-        //            exit = true;
-        //            continue;
-        //        }
-        //        var index = digit--;
-        //        Console.WriteLine(index);
-        //        Console.WriteLine($"Your move: {digit}");
-        //        Console.WriteLine("is differents");
-        //    }
+                .Contains(userTurn);
 
-        //}
-        private static void PrintTable(string[] moves) {
+        private static void PrintTable(IEnumerable<(string, string[], string[])> rules) {
             Console.WriteLine("print table");
         }
     }
