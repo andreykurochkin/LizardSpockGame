@@ -6,34 +6,25 @@ using System.Threading.Tasks;
 using ConsoleTables;
 namespace LizardSpockGame.Core {
     public class Table {
-        public static ConsoleTable Create(string[] headers, IEnumerable<(string, string[], string[])> values) {
+        public static ConsoleTable Create(string[] headers, IEnumerable<(string, string[])> values) {
             var table = new ConsoleTable(CreateHeaderWithFirstCell("  \\  ", headers).ToArray());
             foreach (var row in GetRows(headers, values)) {
                 table.AddRow(row.ToArray());
             }
             return table;
         }
-        private static IEnumerable<List<string>> GetRows(string[] headers, IEnumerable<(string, string[], string[])> values) =>
+
+        private static IEnumerable<List<string>> GetRows(string[] headers, IEnumerable<(string, string[])> values) =>
             headers.Select(h => CreateRow(h, headers, values.First(t => t.Item1 == h)));
-        //public static void Print(IEnumerable<(string, string[], string[])> values) {
-        //    var headers = values.Select(t => t.Item1)
-        //        .ToList();
-        //    var table = new ConsoleTable(CreateHeaderWithFirstCell("  \\  ", headers).ToArray());
-        //    var rows = headers.Select(h => CreateRow(h, headers, values.First(t => t.Item1 == h)));
-        //    foreach (var row in rows) {
-        //        table.AddRow(row.ToArray());
-        //    }
-        //    table.Write();
-        //}
+
         private static List<string> CreateHeaderWithFirstCell(string firtsCell, IEnumerable<string> keys) {
-            var header = new List<string>();
-            header.Add(firtsCell);
+            var header = new List<string> { firtsCell };
             header.AddRange(keys);
             return header;
         }
-        private static List<string> CreateRow(string firstCell, IEnumerable<string> headers, (string, string[], string[]) tuple) {
-            var row = new List<string>();
-            row.Add(firstCell);
+
+        private static List<string> CreateRow(string firstCell, IEnumerable<string> headers, (string, string[]) tuple) {
+            var row = new List<string> { firstCell };
             foreach (var header in headers) {
                 if (header == tuple.Item1) {
                     row.Add("draw");

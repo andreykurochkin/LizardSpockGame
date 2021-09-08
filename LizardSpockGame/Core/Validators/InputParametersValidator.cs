@@ -13,7 +13,7 @@ namespace LizardSpockGame.Core.Validators {
         private const string defaultSuffix = "Please enter new ones like: Stone Scissors Paper Lizard Spock";
         public InputParametersValidator(string[] source) => _source = source;
         public (bool, string) Validate() {
-            var message = string.Empty;
+            string message;
             if (SourceIsNullOrEmpty()) {
                 message = "No input parameters.";
                 return (false, $"{message} {defaultSuffix}");
@@ -23,7 +23,7 @@ namespace LizardSpockGame.Core.Validators {
                 return (false, $"{message} {defaultSuffix}");
             }
             if (LengthIsEven()) {
-                message = "Amount of parameters should be even.";
+                message = "Amount of parameters should be odd.";
                 return (false, $"{message} {defaultSuffix}");
             }
             if (ContainsRepeatedItems()) {
@@ -34,7 +34,7 @@ namespace LizardSpockGame.Core.Validators {
         }
         private bool LengthIsLessThenThree() => _source.Length < 3;
         private bool LengthIsEven() => _source.Length % 2 == 0;
-        private bool ContainsRepeatedItems() => _source.Count() != _source.Distinct().Count();
+        private bool ContainsRepeatedItems() => _source.Length != _source.Distinct().Count();
         private bool SourceIsNullOrEmpty() {
             if (_source is null) {
                 return true;
