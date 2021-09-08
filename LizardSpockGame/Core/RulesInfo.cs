@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LizardSpockGame.Core {
-    public class Rules {
+    public class RulesInfo {
         private readonly string[] _turns;
         private readonly int _amountOfWinners;
-        public Rules(string[] turns) {
+        public RulesInfo(string[] turns) {
             _turns = turns;
             _amountOfWinners = (_turns.Length - 1) / 2;
         }

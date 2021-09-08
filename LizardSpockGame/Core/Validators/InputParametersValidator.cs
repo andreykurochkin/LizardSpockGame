@@ -23,11 +23,11 @@ namespace LizardSpockGame.Core.Validators {
                 return (false, $"{message} {defaultSuffix}");
             }
             if (LengthIsEven()) {
-                message = "Amount of parameters should be odd.";
+                message = "Amount of parameters should be even.";
                 return (false, $"{message} {defaultSuffix}");
             }
             if (ContainsRepeatedItems()) {
-                message = "Parameters should not contain repeated items.";
+                message = "Parameters contain repeated items.";
                 return (false, $"{message} {defaultSuffix}");
             }
             return (true, string.Empty);
